@@ -67,7 +67,7 @@ API_ID  = int(API_ID_STR) if API_ID_STR.strip().isdigit() else 0
 session = StringSession(SESSION_STRING) if SESSION_STRING else StringSession("")
 
 current_dir  = os.path.dirname(os.path.abspath(__file__))
-SESSION_FILE = os.path.join(current_dir, "study_session")
+SESSION_STRING = os.getenv("SESSION_STRING", "")
 
 # ─────────────────────────────────────────────────
 # LRU CACHE
@@ -238,6 +238,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"]
 )
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
@@ -1281,4 +1282,13 @@ async def serve_index():
 # ─────────────────────────────────────────────────
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=11619, reload=False)
+    import os
+
+    port = int(os.environ.get("PORT", 8000))
+
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=False
+    )
